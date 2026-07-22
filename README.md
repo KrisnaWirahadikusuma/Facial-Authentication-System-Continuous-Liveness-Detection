@@ -72,7 +72,7 @@ pip install opencv-python mediapipe
 ```
 ### Step 4: Run Application
 ```text
-python main.py
+python Face Detect Beta.py
 ```
 Note: Ensure your device webcam is connected and accessible. Press the ESC key at any time to exit the program.
 

@@ -42,13 +42,36 @@ facial-liveness-proctoring/
 ├── requirements.txt     # Python library dependency manifest
 └── README.md            # System documentation (Academic Document)
 
-⚙️ Installation & Setup InstructionsFollow these steps to configure and run the system locally:1. Clone the RepositoryBashgit clone [https://github.com/username-kamu/nama-repo.git](https://github.com/username-kamu/nama-repo.git)
+```
+⚙️ Installation & Setup Instructions
+Follow these steps to configure and run the system locally:
+
+1. Clone the Repository
+Bash
+git clone [https://github.com/username-kamu/nama-repo.git](https://github.com/username-kamu/nama-repo.git)
 cd nama-repo
-2. Configure Virtual Environment (Recommended)Bashpython -m venv venv
+2. Configure Virtual Environment (Recommended)
+Bash
+python -m venv venv
 # Activate virtual environment on Windows:
 venv\Scripts\activate
 # Activate virtual environment on macOS/Linux:
 source venv/bin/activate
-3. Install DependenciesInstall the required packages listed in the manifest file:Bashpip install -r requirements.txt
-(Alternatively, install manually: pip install opencv-python mediapipe)4. Execute the ProgramBashpython main.py
-Note: Ensure your webcam is enabled. Press the ESC key on your keyboard to terminate the program.📊 System Testing ScenariosTesting ScenarioInput ConditionSystem Response / OutputValidation StatusInitial AuthenticationSubject present and blinks within 4.5sGreen bounding box, Status: Player (Verified)PassedSpoofing AttemptSubject uses a static photo / phone screenExceeds 4.5s timeout without a fresh blinkFlagged as Cheating (Not Human!) + AlarmSubject AbsenceSubject leaves the camera field of viewFace disappears from the frameAudio Warning + Text PERINGATAN: TIDAK ADA WAJAH!Re-entrySubject re-enters the frameAutomatically resets the 4.5s scanning windowSession Reset📜 LicenseThis project is distributed under the terms of the MIT License. See LICENSE for more information.Developed for Academic Research & Online Examination Security Purposes.
+3. Install Dependencies
+Install the required packages listed in the manifest file:
+
+Bash
+pip install -r requirements.txt
+(Alternatively, install manually: pip install opencv-python mediapipe)
+
+4. Execute the Program
+Bash
+python main.py
+Note: Ensure your webcam is enabled. Press the ESC key on your keyboard to terminate the program.
+
+📊 System Testing Scenarios
+Testing Scenario,Input Condition,System Response / Output,Validation Status
+Initial Authentication,Subject present and blinks within 4.5s,"Green bounding box, Status: Player (Verified)",Passed
+Spoofing Attempt,Subject uses a static photo / phone screen,Exceeds 4.5s timeout without a fresh blink,Flagged as Cheating (Not Human!) + Alarm
+Subject Absence,Subject leaves the camera field of view,Face disappears from the frame,Audio Warning + Text PERINGATAN: TIDAK ADA WAJAH!
+Re-entry,Subject re-enters the frame,Automatically resets the 4.5s scanning window,Session Reset

@@ -1,0 +1,162 @@
+import cv2
+import mediapipe as mp
+import time
+import winsound
+
+
+mp_face_detection = mp.solutions.face_detection
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
+
+face_detection = mp_face_detection.FaceDetection(
+    model_selection=0, min_detection_confidence=0.7
+)
+face_mesh = mp_face_mesh.FaceMesh(
+    max_num_faces=1,
+    refine_landmarks=True,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5,
+)
+
+cap = cv2.VideoCapture(0)
+
+
+is_verified = False
+last_blink_time = 0
+was_face_present = (
+    False  
+)
+VERIFY_DURATION = (
+    4.5  
+)
+
+print("Sistem Keamanan Aktif.")
+
+while cap.isOpened():
+  success, image = cap.read()
+  if not success:
+    break
+
+  
+  image = cv2.flip(image, 1)
+  ih, iw, _ = image.shape
+  current_time = time.time()
+
+ 
+  cv2.putText(
+      image,
+      "PENDETEKSI WAJAH",
+      (20, 40),
+      cv2.FONT_HERSHEY_SIMPLEX,
+      0.8,
+      (0, 255, 255),
+      2,
+  )
+
+  rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  results_detection = face_detection.process(rgb_image)
+  results_mesh = face_mesh.process(rgb_image)
+
+  
+  if results_detection.detections:
+    
+    for detection in results_detection.detections:
+      bboxC = detection.location_data.relative_bounding_box
+      x, y, w, h = (
+          int(bboxC.xmin * iw),
+          int(bboxC.ymin * ih),
+          int(bboxC.width * iw),
+          int(bboxC.height * ih),
+      )
+      x1, x2 = max(0, x), min(iw, x + w)
+      y1, y2 = max(0, y), min(ih, y + h)
+
+      
+      if not was_face_present:
+        is_verified = False
+        last_blink_time = current_time  
+        was_face_present = True
+
+      
+      if results_mesh.multi_face_landmarks:
+        for face_landmarks in results_mesh.multi_face_landmarks:
+          mp_drawing.draw_landmarks(
+              image=image,
+              landmark_list=face_landmarks,
+              connections=mp.solutions.face_mesh.FACEMESH_TESSELATION,
+              landmark_drawing_spec=mp_drawing.DrawingSpec(
+                  color=(0, 255, 255), thickness=1, circle_radius=1
+              ),
+              connection_drawing_spec=mp_drawing.DrawingSpec(
+                  color=(0, 255, 255), thickness=1
+              ),
+          )
+
+          
+          upper_eyelid = face_landmarks.landmark[159].y
+          lower_eyelid = face_landmarks.landmark[145].y
+          eye_distance = abs(upper_eyelid - lower_eyelid)
+
+          if eye_distance < 0.012:
+            is_verified = True  
+
+      
+      elapsed_time = current_time - last_blink_time
+      sisa_waktu = max(0.0, round(VERIFY_DURATION - elapsed_time, 1))
+
+      
+      if is_verified:
+        color = (0, 255, 0)  
+        name = "Krisna (Verified)"
+      else:
+        
+        if sisa_waktu > 0:
+          color = (0, 165, 255)  # Oranye
+          name = f"MEMINDAI... [Verifikasi: {sisa_waktu}s]"
+        else:
+          
+          color = (0, 0, 255)  # Merah
+          name = "Not Human!"
+          winsound.Beep(2000, 50)  
+
+      
+      cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
+      cv2.rectangle(image, (x1, y1 - 35), (x2, y1), color, cv2.FILLED)
+      cv2.putText(
+          image,
+          name,
+          (x1 + 6, y1 - 6),
+          cv2.FONT_HERSHEY_DUPLEX,
+          0.5,
+          (255, 255, 255),
+          1,
+      )
+
+  else:
+   
+    was_face_present = (
+        False  
+    )
+    is_verified = False
+    winsound.Beep(2500, 200)  
+
+    
+    cv2.putText(
+        image,
+        "PERINGATAN: TIDAK ADA WAJAH!",
+        (20, 80),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (0, 0, 255),
+        2,
+    )
+
+  
+  cv2.imshow("Smart Security Face & Anti-Spoofing", image)
+
+  
+  if cv2.waitKey(1) & 0xFF == 27:
+    break
+
+cap.release()
+cv2.destroyAllWindows()

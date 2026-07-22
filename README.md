@@ -5,39 +5,50 @@
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Face%25Mesh-orange.svg)](https://developers.google.com/mediapipe)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Abstrak / Ringkasan Proyek
-Sistem pengawasan ujian daring (*online proctoring*) rentan terhadap berbagai bentuk kecurangan, termasuk penggunaan media cetak statis atau layar sekunder (*presentation attack / spoofing*). Proyek ini mengembangkan sistem verifikasi biometrik wajah berbasis *Computer Vision* yang mengintegrasikan **Continuous Liveness Detection (Deteksi Keaktifan Berkelanjutan)** menggunakan algoritma *Mesh Tracking*. Sistem dirancang untuk beroperasi secara *real-time* dengan mendeteksi kedipan mata (*blink detection*) dan melacak kehadiran subjek secara dinamis guna menjamin integritas akademik selama evaluasi berlangsung.
+## Abstract / Project Overview
+Online proctoring systems are vulnerable to various forms of academic dishonesty, including presentation attacks (spoofing via static printouts or secondary display screens). This project develops a computer vision-based facial biometric verification system integrating **Continuous Liveness Detection** via Mesh Tracking algorithms. The system operates in real-time by monitoring blink mechanics and dynamically tracking subject presence to ensure academic integrity during remote evaluations.
 
 ---
 
-## 🔬 Arsitektur dan Metodologi Sistem
+## 🔬 System Architecture & Methodology
 
-Sistem ini dibangun dengan meminimalkan ketergantungan pada pustaka kompleks berlisensi C++ (seperti `dlib`), sehingga lebih ringan dan andal di berbagai lingkungan perangkat keras.
+The system is engineered to minimize dependencies on heavy C++-based libraries (such as `dlib`), ensuring lightweight and reliable execution across standard hardware environments:
 
 1. **Face Detection & Bounding Box**: 
-   Menggunakan *MediaPipe Face Detection* untuk mendeteksi koordinat spasial wajah secara akurat pada setiap frame video.
+   Leverages *MediaPipe Face Detection* to accurately isolate spatial facial coordinates in every video frame.
 2. **Facial Landmark & Mesh Tessellation**: 
-   Memetakan 468 titik landmark wajah menggunakan *MediaPipe Face Mesh* untuk menghasilkan visualisasi *tesselation* yang memantau geometri wajah secara konstan.
+   Maps 468 facial landmarks using *MediaPipe Face Mesh* to render a real-time futuristic yellow tessellation grid monitoring facial geometry continuously.
 3. **Active Liveness Protocol (Anti-Spoofing)**: 
-   Menerapkan metrik jarak vertikal kelopak mata (*Eye Aspect Ratio* tidak langsung via indeks landmark $159$ dan $145$). Pengguna diwajibkan melakukan kedipan berkala dalam rentang waktu yang ditentukan (`VERIFY_DURATION`) untuk membuktikan keaslian subjek.
+   Implements vertical eyelid distance metrics (via specific landmark indices $159$ and $145$). Users are required to execute periodic blinks within a strict time threshold (`VERIFY_DURATION`) to prove biological liveness.
 4. **State Machine & Auto-Reset**: 
-   * Jika wajah terdeteksi keluar dari *frame*, sistem secara otomatis mencabut status verifikasi dan membunyikan peringatan akustik (`winsound`).
-   * Jika wajah baru masuk kembali, sistem otomatis menginisialisasi ulang fase *scanning* (hitung mundur 4.5 detik) untuk menunggu konfirmasi kedipan berikutnya.
+   * If a subject exits the camera frame, the system automatically revokes verification status and triggers an acoustic alert via `winsound`.
+   * If a subject re-enters, the system automatically re-initializes the scanning phase (a 4.5-second countdown) to await a fresh blink confirmation.
 
 ---
 
-## 🛠️ Spesifikasi Perangkat Lunak (Tech Stack)
-* **Bahasa Pemrograman**: Python 3.x
-* **Pengolahan Citra Digital**: OpenCV (`cv2`)
-* **Machine Learning / Ekstraksi Fitur**: Google MediaPipe Solutions
-* **Utilitas & Sistem Tanggap**: `time`, `winsound`
+## 🛠️ Tech Stack
+* **Programming Language**: Python 3.x
+* **Computer Vision**: OpenCV (`cv2`)
+* **Machine Learning / Feature Extraction**: Google MediaPipe Solutions
+* **Utilities & Audio Feedback**: `time`, `winsound`
 
 ---
 
-## 📂 Struktur Direktori Repositori
+## 📂 Repository Directory Structure
 ```text
 facial-liveness-proctoring/
 │
-├── main.py              # Script utama logika sistem & antarmuka OpenCV
-├── requirements.txt     # Daftar dependensi modul pustaka
-└── README.md            # Dokumentasi sistem (Dokumen Akademik)
+├── main.py              # Core application logic & OpenCV interface
+├── requirements.txt     # Python library dependency manifest
+└── README.md            # System documentation (Academic Document)
+
+⚙️ Installation & Setup InstructionsFollow these steps to configure and run the system locally:1. Clone the RepositoryBashgit clone [https://github.com/username-kamu/nama-repo.git](https://github.com/username-kamu/nama-repo.git)
+cd nama-repo
+2. Configure Virtual Environment (Recommended)Bashpython -m venv venv
+# Activate virtual environment on Windows:
+venv\Scripts\activate
+# Activate virtual environment on macOS/Linux:
+source venv/bin/activate
+3. Install DependenciesInstall the required packages listed in the manifest file:Bashpip install -r requirements.txt
+(Alternatively, install manually: pip install opencv-python mediapipe)4. Execute the ProgramBashpython main.py
+Note: Ensure your webcam is enabled. Press the ESC key on your keyboard to terminate the program.📊 System Testing ScenariosTesting ScenarioInput ConditionSystem Response / OutputValidation StatusInitial AuthenticationSubject present and blinks within 4.5sGreen bounding box, Status: Player (Verified)PassedSpoofing AttemptSubject uses a static photo / phone screenExceeds 4.5s timeout without a fresh blinkFlagged as Cheating (Not Human!) + AlarmSubject AbsenceSubject leaves the camera field of viewFace disappears from the frameAudio Warning + Text PERINGATAN: TIDAK ADA WAJAH!Re-entrySubject re-enters the frameAutomatically resets the 4.5s scanning windowSession Reset📜 LicenseThis project is distributed under the terms of the MIT License. See LICENSE for more information.Developed for Academic Research & Online Examination Security Purposes.

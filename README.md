@@ -49,8 +49,8 @@ To distinguish a live subject from a static presentation attack:
 
 ### Step 1: Clone Repository
 ```text
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name
+git clone [https://github.com/KrisnaWirahadikusuma/Facial-Authentication-System-Continuous-Liveness-Detection](https://github.com/KrisnaWirahadikusuma/Facial-Authentication-System-Continuous-Liveness-Detection.git)
+cd Facial-Authentication-System-Continuous-Liveness-Detection
 ```
 
 ### Step 2: Configure Virtual Environment (Recommended)

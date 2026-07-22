@@ -7,7 +7,7 @@
 
 ---
 
-## 📌 Executive Summary
+## 📌Description Summary
 
 Identity fraud and presentation attacks pose significant security challenges in remote examination environments. Standard face detection implementations often fail to differentiate between a live human subject and a static visual representation, such as a printed photograph or a digital display screen.
 
